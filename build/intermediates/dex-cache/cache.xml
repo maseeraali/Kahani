@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/home/maseera/.gradle/caches/modules-2/files-2.1/com.squareup.picasso/picasso/2.5.2/7446d06ec8d4f7ffcc53f1da37c95f200dcb9387/picasso-2.5.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.0"
+        sha1="7446d06ec8d4f7ffcc53f1da37c95f200dcb9387">
+        <dex dex="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/pre-dexed/debug/picasso-2.5.2_b73f9c7c9df2eb4199f19c7363deef0cf6d2395d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.0.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.0"
+        sha1="2f7e6e2dad1bccaf68a8820820adc6c0d5b96d37">
+        <dex dex="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-24.0.0_df105b74f7646a770dd4de7b27419760a6f38872.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/24.0.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.0"
+        sha1="894922f67adeaaef51f077a29e315da21a3382d3">
+        <dex dex="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/pre-dexed/debug/com.android.support-recyclerview-v7-24.0.0_d386d5cbec4437b2cc9953624fa093f494c27c27.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/maseera/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/24.0.0/support-annotations-24.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.0"
+        sha1="2943c74db6d4346ab8c6531adac91fa05c137c40">
+        <dex dex="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/pre-dexed/debug/support-annotations-24.0.0_f485d2f4b6f38e9140efacfe447cca5f34f60587.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.0.0/jars/libs/internal_impl-24.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.0"
+        sha1="fcaf463e10e69c1923ccf1edeba3b4196d239e00">
+        <dex dex="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/pre-dexed/debug/internal_impl-24.0.0_38f52cbde5ea6f3418c6afeff43d1285551edd49.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/24.0.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.0"
+        sha1="0874286cc2fd88d54fdf130e9d5372730da6de97">
+        <dex dex="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-24.0.0_0a77847352ece58fddf3cded4169377ded54c51c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/exploded-aar/com.android.support/design/24.0.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.0"
+        sha1="fc29308a7a8f6d4407b34634eb48fb8b817f9b23">
+        <dex dex="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/pre-dexed/debug/com.android.support-design-24.0.0_2df711fbb508c3a81ae78de8d054bcb65e5533a7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/24.0.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.0"
+        sha1="3bd97cfefd783e9de1dd1c30574a6adb44b4409b">
+        <dex dex="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-24.0.0_0851431152a970a61a462895b6af8de11aac51f8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/24.0.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.0"
+        sha1="e70f608219ed6b974644c333249ab2bb7b71de98">
+        <dex dex="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/pre-dexed/debug/com.android.support-animated-vector-drawable-24.0.0_525ade825f519671089e525b35fc41bc5d72bafb.jar" />
+    </item>
+
+</items>

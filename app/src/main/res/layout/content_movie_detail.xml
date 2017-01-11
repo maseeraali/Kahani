@@ -1,0 +1,94 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment"
+    android:name="com.example.maseera.kahani.MovieDetailActivityFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    >
+
+
+<ScrollView
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/detail_backdrop_image_view"
+        android:src="@drawable/placeholder_backdrop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        android:adjustViewBounds="true"/>
+
+    <ImageView
+        android:id="@+id/detail_poster_image_view"
+        android:transitionName="@string/transition_poster"
+        android:src="@drawable/placeholder_poster"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/detail_backdrop_image_view"
+        android:layout_marginTop="-15dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="10dp"
+        android:adjustViewBounds="true"/>
+
+
+    <TextView
+        android:id="@+id/detail_rating_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/detail_poster_image_view"
+        android:layout_below="@id/detail_backdrop_image_view"
+        android:textSize="24sp"/>
+
+    <RatingBar
+
+        android:id="@+id/detail_rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/detail_rating_text_view"
+        android:layout_toRightOf="@id/detail_poster_image_view"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:isIndicator="true"
+        android:numStars="5"
+        style="@style/Widget.AppCompat.RatingBar.Indicator" />
+
+    <TextView
+        android:id="@+id/detail_release_date_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@id/detail_rating_bar"
+        android:layout_toRightOf="@id/detail_poster_image_view"
+        android:textSize="14sp"/>
+
+    <TextView
+        android:id="@+id/detail_synopsis_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_below="@id/detail_poster_image_view"
+        android:textSize="24sp"
+        android:text="@string/detail_synopsis"/>
+
+    <TextView
+        android:id="@+id/detail_synopsis_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_below="@id/detail_synopsis_title"
+        android:textSize="14sp"/>
+
+</RelativeLayout>
+</ScrollView>
+
+
+    </RelativeLayout>

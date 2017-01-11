@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Kahani</string>
+    <string name="action_settings">Settings</string>
+    <string name="sort_movies_by">Order By</string>
+    <string name="order">order</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="value_default">popularity.desc</string>
+    <string name="transition_poster">transition_poster_image_view</string>
+    <string name="detail_synopsis">Overview</string>
+    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_movie_detail">MovieDetailActivity</string>
+</resources>
