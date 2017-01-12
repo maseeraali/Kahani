@@ -1,6 +1,7 @@
 package com.example.maseera.kahani;
 
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -12,14 +13,26 @@ import com.squareup.picasso.Picasso;
 
 import java.text.DateFormatSymbols;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public class MovieDetailActivity extends AppCompatActivity {
     private MovieDetail mMovieInfo = new MovieDetail("title", "url", "url", "synopsis", "date", 5);
+
+
+    @InjectView(R.id.detail_backdrop_image_view) ImageView mBackDropImageView;
+    @InjectView(R.id.detail_poster_image_view) ImageView mPosterImageView;
+    @InjectView(R.id.detail_rating_text_view) TextView mRatingTextView;
+    @InjectView(R.id.detail_rating_bar) RatingBar mRatingBar;
+    @InjectView(R.id.detail_release_date_text_view) TextView mReleaseDateTextView;
+    @InjectView(R.id.detail_synopsis_text_view) TextView mSynopsisTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
 
+        ButterKnife.inject(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -32,12 +45,8 @@ public class MovieDetailActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(mMovieInfo.getTitle());
         // If we don't get useable backdrop value, show a colored background matching the primary
         // app color.
-        ImageView mBackDropImageView = (ImageView)findViewById(R.id.detail_backdrop_image_view);
-        ImageView mPosterImageView = (ImageView)findViewById(R.id.detail_poster_image_view);
-        TextView mRatingTextView = (TextView)findViewById(R.id.detail_rating_text_view);
-        RatingBar mRatingBar = (RatingBar) findViewById(R.id.detail_rating_bar);
-        TextView mReleaseDateTextView = (TextView) findViewById(R.id.detail_release_date_text_view);
-        TextView mSynopsisTextView = (TextView) findViewById(R.id.detail_synopsis_text_view);
+
+
         String backdropImgUrl = mMovieInfo.getBackdropImgUrl();
         if (backdropImgUrl.equals("null")) {
             mBackDropImageView.setImageResource(R.drawable.placeholder_null);
@@ -83,7 +92,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         } else if(id == android.R.id.home) {
-            super.onBackPressed();
+            NavUtils.navigateUpFromSameTask(this);
             return true;
         }
 

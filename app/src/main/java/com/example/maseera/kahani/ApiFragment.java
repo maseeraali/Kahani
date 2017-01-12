@@ -31,9 +31,10 @@ import java.util.ArrayList;
  */
 public class ApiFragment extends Fragment {
 
-    int length =20;
+    int length = 20;
     private MovieDetailAdapter movieAdapter;
     private ArrayList<MovieDetail> mCurrentMovieList = new ArrayList<>();
+
     public ApiFragment() {
     }
 
@@ -42,17 +43,17 @@ public class ApiFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        movieAdapter = new MovieDetailAdapter(getActivity(),R.layout.list_item_movie,mCurrentMovieList);
+        movieAdapter = new MovieDetailAdapter(getActivity(), R.layout.list_item_movie, mCurrentMovieList);
 
         // Get a reference to the ListView, and attach this adapter to it.
         GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movie);
         gridView.setAdapter(movieAdapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 MovieDetail movie = movieAdapter.getItem(i);
-                Intent intent = new Intent(getActivity(),MovieDetailActivity.class).putExtra("EXTRA_TEXT",movie);
+                Intent intent = new Intent(getActivity(), MovieDetailActivity.class).putExtra("EXTRA_TEXT", movie);
                 startActivity(intent);
             }
         });
@@ -69,7 +70,7 @@ public class ApiFragment extends Fragment {
     private void updateList() {
         FetchMovieTask movieTask = new FetchMovieTask();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String orderBy = pref.getString(getString(R.string.order), getString(R.string.value_default));
+        String orderBy = pref.getString(getString(R.string.order), getString(R.string.default_order));
         movieTask.execute(orderBy);
 
     }
@@ -82,9 +83,10 @@ public class ApiFragment extends Fragment {
 
     public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<MovieDetail>> {
         private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
+
         @Override
         protected ArrayList<MovieDetail> doInBackground(String... params) {
-            if(params.length == 0) {
+            if (params.length == 0) {
                 return null;
             }
             // These two need to be declared outside the try/catch
@@ -97,11 +99,11 @@ public class ApiFragment extends Fragment {
 
             try {
 
-                final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/discover/movie?";
-                final String QUERY_PARAM = "sort_by";
+                final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/movie";
+           //     final String QUERY_PARAM = "sort_by";
                 final String APPID_PARAM = "api_key";
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
-                        .appendQueryParameter(QUERY_PARAM, params[0])
+                        .appendPath(params[0])
                         .appendQueryParameter(APPID_PARAM, BuildConfig.THE_MOVIE_DB_API_KEY)
                         .build();
 
@@ -164,7 +166,7 @@ public class ApiFragment extends Fragment {
                     String imgBaseUrl = "http://image.tmdb.org/t/p/";
                     JSONObject jsonObject = new JSONObject(movieJsonStr);
                     JSONArray jsonArray = jsonObject.getJSONArray("results");
-                    for(int i = 0; i < jsonArray.length(); i++) {
+                    for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject object = jsonArray.getJSONObject(i);
 
                         String posterImgUrl = object.getString("poster_path");
@@ -176,7 +178,7 @@ public class ApiFragment extends Fragment {
 
                         posterImgUrl = imgBaseUrl + "w342" + posterImgUrl;
 
-                        if(!backdropImgUrl.equals("null")) {
+                        if (!backdropImgUrl.equals("null")) {
                             backdropImgUrl = imgBaseUrl + "w500" + backdropImgUrl;
                         }
 
@@ -187,7 +189,7 @@ public class ApiFragment extends Fragment {
                     }
 
                     return movieList;
-                } catch(JSONException e) {
+                } catch (JSONException e) {
                     movieList = new ArrayList<MovieDetail>();
                 }
 
@@ -197,9 +199,9 @@ public class ApiFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<MovieDetail> result) {
-            if(result != null) {
+            if (result != null) {
                 movieAdapter.clear();
-                for(MovieDetail info : result) {
+                for (MovieDetail info : result) {
                     movieAdapter.add(info);
                 }
             }

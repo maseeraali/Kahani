@@ -39,6 +39,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="/home/maseera/.gradle/caches/modules-2/files-2.1/com.jakewharton/butterknife/6.1.0/63735f48b82bcd24cdd33821342428252eb1ca5a/butterknife-6.1.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.0"
+        sha1="63735f48b82bcd24cdd33821342428252eb1ca5a">
+        <dex dex="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/pre-dexed/debug/butterknife-6.1.0_42759bc85a8e97d823c4e6b20e77ec2fcd671839.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/home/maseera/AndroidStudioProjects/Kahani/app/build/intermediates/exploded-aar/com.android.support/support-v4/24.0.0/jars/libs/internal_impl-24.0.0.jar"
         jumboMode="false"
         optimize="true"
