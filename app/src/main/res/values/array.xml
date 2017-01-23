@@ -4,10 +4,12 @@
     <string-array name="order_by">
         <item>"Most Popular"</item>
         <item>"Highest Rated"</item>
+        <item>"Favorite"</item>
     </string-array>
 
     <string-array name="order_by_values">
         <item>"popular"</item>
         <item>"top_rated"</item>
+        <item>"favorite"</item>
     </string-array>
 </resources>
