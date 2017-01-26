@@ -1,4 +1,4 @@
-package com.example.maseera.kahani.Model;
+package com.example.maseera.kahani.model;
 
 import org.json.JSONException;
 import org.json.JSONObject;

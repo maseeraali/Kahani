@@ -7,12 +7,13 @@
     <string name="transition_poster">transition_poster_image_view</string>
     <string name="detail_synopsis">Overview</string>
     <string name="title_activity_detail">DetailActivity</string>
-    <string name="title_activity_movie_detail">Movie Details</string>
+    <string name="title_activity_movie_detail">Details</string>
     <string name="reviews">Reviews</string>
     <string name="trailers">Trailers</string>
     <string name="action_favorite">Favorite</string>
     <string name="action_share">Share</string>
     <string name="removed_from_favorites">Removed from Favorites</string>
     <string name="added_to_favorites">Added to Favorites</string>
+    <string name="no_like">You have no likes yet.</string>
 
 </resources>

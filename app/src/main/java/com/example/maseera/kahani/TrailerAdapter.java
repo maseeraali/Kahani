@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
-import com.example.maseera.kahani.Model.Trailer;
+import com.example.maseera.kahani.model.Trailer;
 
 import java.util.List;
 

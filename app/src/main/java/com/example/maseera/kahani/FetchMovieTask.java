@@ -1,12 +1,10 @@
 package com.example.maseera.kahani;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.example.maseera.kahani.Model.MovieDetail;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,30 +16,26 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * Created by maseera on 12/1/17.
  */
-public class FetchMovieTask extends AsyncTask<String,Void, ArrayList<MovieDetail>> {
+public class FetchMovieTask extends AsyncTask<String,Void, Void> {
     private final String LOG_TAG = FetchMovieTask.class.getSimpleName();
-    MovieAdapter movieAdapter;
+    MovieAdapter2 movieAdapter;
     private final Context mContext;
 
-    public FetchMovieTask(Context context,MovieAdapter movieAdapter) {
+    public FetchMovieTask(Context context,MovieAdapter2 movieAdapter) {
         this.mContext = context;
         this.movieAdapter = movieAdapter;
     }
 
 
     public static final String[] MOVIE_COLUMNS = {
-            // In this case the id needs to be fully qualified with a table name, since
-            // the content provider joins the location & weather tables in the background
-            // (both have an _id column)
-            // On the one hand, that's annoying.  On the other, you can search the weather table
-            // using the location set by the user, which is only in the Location table.
-            // So the convenience is worth it.
-            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry.COLUMN_MOVIE_ID,
+
+            MovieContract.MovieEntry.TABLE_NAME + "." + MovieContract.MovieEntry._ID,
+            MovieContract.MovieEntry.COLUMN_MOVIE_ID,
             MovieContract.MovieEntry.COLUMN_TITLE,
             MovieContract.MovieEntry.COLUMN_IMAGE,
             MovieContract.MovieEntry.COLUMN_IMAGE2,
@@ -49,23 +43,24 @@ public class FetchMovieTask extends AsyncTask<String,Void, ArrayList<MovieDetail
             MovieContract.MovieEntry.COLUMN_RATING,
             MovieContract.MovieEntry.COLUMN_DATE
     };
-    // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
-    // must change.
-    public static final int COL_MOVIE_ID = 0;
-    public static final int COL_TITLE = 1;
-    public static final int COL_IMAGE = 2;
-    public static final int COL_IMAGE2 = 3;
-    public static final int COL_OVERVIEW = 4;
-    public static final int COL_RATING = 5;
-    public static final int COL_DATE = 6;
+
+    public static final int COL_MOVIE_ID = 1;
+    public static final int COL_TITLE = 2;
+    public static final int COL_IMAGE = 3;
+    public static final int COL_IMAGE2 = 4;
+    public static final int COL_OVERVIEW = 5;
+    public static final int COL_RATING = 6;
+    public static final int COL_DATE = 7;
 
 
-    private ArrayList<MovieDetail> getMovieDataFromJson(String movieJsonStr) throws JSONException {
-        ArrayList<MovieDetail> movieList = new ArrayList<MovieDetail>();
+    private void getMovieDataFromJson(String movieJsonStr, String orderBy) throws JSONException {
+
             try {
                 String imgBaseUrl = "http://image.tmdb.org/t/p/";
                 JSONObject jsonObject = new JSONObject(movieJsonStr);
                 JSONArray jsonArray = jsonObject.getJSONArray("results");
+
+                Vector<ContentValues> cVVector = new Vector<ContentValues>(jsonArray.length());
 
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject object = jsonArray.getJSONObject(i);
@@ -83,38 +78,69 @@ public class FetchMovieTask extends AsyncTask<String,Void, ArrayList<MovieDetail
                     if (!backdropImgUrl.equals("null")) {
                         backdropImgUrl = imgBaseUrl + "w500" + backdropImgUrl;
                     }
-                    MovieDetail info = new MovieDetail(id,title, posterImgUrl, backdropImgUrl,
-                            synopsis, releaseDate, voteAvg);
 
-                    movieList.add(info);
+                    ContentValues values = new ContentValues();
+
+                    if (orderBy.equalsIgnoreCase("popular")) {
+
+                        values.put(MovieContract.PopularEntry.COLUMN_MOVIE_ID, id);
+                        values.put(MovieContract.PopularEntry.COLUMN_TITLE,title);
+                        values.put(MovieContract.PopularEntry.COLUMN_IMAGE, posterImgUrl);
+                        values.put(MovieContract.PopularEntry.COLUMN_IMAGE2, backdropImgUrl);
+                        values.put(MovieContract.PopularEntry.COLUMN_OVERVIEW,synopsis);
+                        values.put(MovieContract.PopularEntry.COLUMN_RATING, voteAvg);
+                        values.put(MovieContract.PopularEntry.COLUMN_DATE, releaseDate);
+
+                    } else {
+                        values.put(MovieContract.RatedEntry.COLUMN_MOVIE_ID, id);
+                        values.put(MovieContract.RatedEntry.COLUMN_TITLE, title);
+                        values.put(MovieContract.RatedEntry.COLUMN_IMAGE, posterImgUrl);
+                        values.put(MovieContract.RatedEntry.COLUMN_IMAGE2, backdropImgUrl);
+                        values.put(MovieContract.RatedEntry.COLUMN_OVERVIEW, synopsis);
+                        values.put(MovieContract.RatedEntry.COLUMN_RATING, voteAvg);
+                        values.put(MovieContract.RatedEntry.COLUMN_DATE, releaseDate);
+
+                    }
+
+                    cVVector.add(values);
                 }
+                int inserted = 0;
+                    // add to database
+                    if ( cVVector.size() > 0 ) {
 
-                return movieList;
-            } catch (JSONException e) {
-                movieList = new ArrayList<MovieDetail>();
+                        ContentValues[] cvArray = new ContentValues[cVVector.size()];
+                        cVVector.toArray(cvArray);
+                        if(orderBy.equalsIgnoreCase("popular")) {
+                            inserted = mContext.getContentResolver().bulkInsert(MovieContract.PopularEntry.CONTENT_URI, cvArray);
+                            Log.v(LOG_TAG, "insert " + inserted);
+                        }
+                        else {
+                            inserted = mContext.getContentResolver().bulkInsert(MovieContract.RatedEntry.CONTENT_URI, cvArray);
+                            Log.v(LOG_TAG, "insert " + inserted);
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    Log.e(LOG_TAG, e.getMessage(), e);
+                    e.printStackTrace();
+                }
             }
-        return movieList;
-    }
-
 
         @Override
-        protected ArrayList<MovieDetail> doInBackground (String...params){
+        protected Void doInBackground (String...params){
             if (params.length == 0) {
                 return null;
             }
 
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
-// Will contain the raw JSON response as a string.
             String movieJsonStr = null;
 
             try {
 
                 final String MOVIE_BASE_URL = "https://api.themoviedb.org/3/movie";
-                //     final String QUERY_PARAM = "sort_by";
+
                 final String APPID_PARAM = "api_key";
                 Uri builtUri = Uri.parse(MOVIE_BASE_URL).buildUpon()
                         .appendPath(params[0])
@@ -141,9 +167,7 @@ public class FetchMovieTask extends AsyncTask<String,Void, ArrayList<MovieDetail
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
+
                     buffer.append(line + "\n");
                 }
 
@@ -153,10 +177,12 @@ public class FetchMovieTask extends AsyncTask<String,Void, ArrayList<MovieDetail
                 }
                 movieJsonStr = buffer.toString();
                 Log.v(LOG_TAG, "JsonStr " + movieJsonStr);
-           //     getMovieDataFromJson(movieJsonStr);
+                getMovieDataFromJson(movieJsonStr,params[0]);
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                return null;
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -170,76 +196,7 @@ public class FetchMovieTask extends AsyncTask<String,Void, ArrayList<MovieDetail
                 }
             }
 
-            try {
-                return getMovieDataFromJson(movieJsonStr);
-            } catch (JSONException e) {
-                Log.e(LOG_TAG, e.getMessage(), e);
-                e.printStackTrace();
-            }
-
-            // This will only happen if there was an error getting or parsing the forecast.
             return null;
         }
-    @Override
-    protected void onPostExecute(ArrayList<MovieDetail> result) {
-        if (result != null) {
-            movieAdapter.clear();
-            for (MovieDetail info : result) {
-                movieAdapter.add(info);
 
-            }
-
-        }
-        else {
-            Toast.makeText(mContext, "Something went wrong, please check your internet connection and try again later! ",Toast.LENGTH_LONG).show();
-        }
-    }
-
-//
-//    public class FetchFavoriteMoviesTask extends AsyncTask<Void, Void, ArrayList<MovieDetail>> {
-//
-//        private Context mContext;
-//
-//        public FetchFavoriteMoviesTask(Context context) {
-//            mContext = context;
-//        }
-//
-//        private ArrayList<MovieDetail> getFavoriteMoviesDataFromCursor(Cursor cursor) {
-//            ArrayList<MovieDetail> results = new ArrayList<>();
-//            if (cursor != null && cursor.moveToFirst()) {
-//                do {
-//                    MovieDetail movie = new MovieDetail(cursor.getInt(COL_MOVIE_ID),
-//                            cursor.getString(COL_TITLE),cursor.getString(COL_IMAGE),
-//                            cursor.getString(COL_IMAGE2),cursor.getString(COL_OVERVIEW),cursor.getString(COL_DATE),
-//                            cursor.getDouble(COL_RATING));
-//                    results.add(movie);
-//                } while (cursor.moveToNext());
-//                cursor.close();
-//            }
-//            return results;
-//        }
-//
-//        @Override
-//        protected ArrayList<MovieDetail> doInBackground(Void... params) {
-//            Cursor cursor = mContext.getContentResolver().query(
-//                    MovieContract.MovieEntry.CONTENT_URI,
-//                    MOVIE_COLUMNS,
-//                    null,
-//                    null,
-//                    null
-//            );
-//            return getFavoriteMoviesDataFromCursor(cursor);
-//        }
-//
-//        @Override
-//        protected void onPostExecute(ArrayList<MovieDetail> result) {
-//            if (result != null) {
-//                movieAdapter.clear();
-//                for (MovieDetail info : result) {
-//                    movieAdapter.add(info);
-//                }
-//            }
-//        }
-//
-//    }
 }

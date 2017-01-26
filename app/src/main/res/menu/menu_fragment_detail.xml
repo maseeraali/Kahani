@@ -4,8 +4,8 @@ xmlns:app="http://schemas.android.com/apk/res-auto">
 <item android:id="@+id/action_favorite"
     android:title="@string/action_favorite"
     app:showAsAction="always"
-    android:icon="@android:drawable/star_big_off"
-    app:icon="@android:drawable/star_big_off" />
+    android:icon="@drawable/abc_btn_rating_star_off_mtrl_alpha"
+    app:icon="@drawable/abc_btn_rating_star_off_mtrl_alpha" />
 
 <item android:id="@+id/action_share"
     android:title="@string/action_share"

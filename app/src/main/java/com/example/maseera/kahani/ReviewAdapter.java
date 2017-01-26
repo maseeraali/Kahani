@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.example.maseera.kahani.Model.Review;
+import com.example.maseera.kahani.model.Review;
 
 import java.util.List;
 

@@ -2,52 +2,73 @@ package com.example.maseera.kahani;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.example.maseera.kahani.Model.MovieDetail;
-
-import java.util.ArrayList;
-
-import static com.example.maseera.kahani.FetchMovieTask.COL_DATE;
-import static com.example.maseera.kahani.FetchMovieTask.COL_IMAGE;
-import static com.example.maseera.kahani.FetchMovieTask.COL_IMAGE2;
 import static com.example.maseera.kahani.FetchMovieTask.COL_MOVIE_ID;
-import static com.example.maseera.kahani.FetchMovieTask.COL_OVERVIEW;
-import static com.example.maseera.kahani.FetchMovieTask.COL_RATING;
-import static com.example.maseera.kahani.FetchMovieTask.COL_TITLE;
 import static com.example.maseera.kahani.FetchMovieTask.MOVIE_COLUMNS;
 
 /**
  * A placeholder fragment containing a simple view.
  */
-public class MovieFragment extends Fragment {
+public class MovieFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    private MovieAdapter movieAdapter;
+    private MovieAdapter2 movieAdapter;
     private static final String FAVORITE = "favorite";
+    private static final String POPULAR = "popular";
+    private static final String RATED = "top_rated";
+    private GridView gridView;
     private int mPosition = GridView.INVALID_POSITION;
     private static final String SELECTED_KEY = "selected_position";
+    private static final int MOVIE_LOADER = 0;
+    private Uri uri;
+    private  String[] COLUMNS;
+    public static final String[] POPULAR_COLUMNS = {
 
-    private ArrayList<MovieDetail> mMovies = new ArrayList<>();
+            MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
+            MovieContract.PopularEntry.COLUMN_MOVIE_ID,
+            MovieContract.PopularEntry.COLUMN_TITLE,
+            MovieContract.PopularEntry.COLUMN_IMAGE,
+            MovieContract.PopularEntry.COLUMN_IMAGE2,
+            MovieContract.PopularEntry.COLUMN_OVERVIEW,
+            MovieContract.PopularEntry.COLUMN_RATING,
+            MovieContract.PopularEntry.COLUMN_DATE
+    };
+    public static final String[] RATED_COLUMNS = {
+
+            MovieContract.RatedEntry.TABLE_NAME + "." + MovieContract.RatedEntry._ID,
+            MovieContract.RatedEntry.COLUMN_MOVIE_ID,
+            MovieContract.RatedEntry.COLUMN_TITLE,
+            MovieContract.RatedEntry.COLUMN_IMAGE,
+            MovieContract.RatedEntry.COLUMN_IMAGE2,
+            MovieContract.RatedEntry.COLUMN_OVERVIEW,
+            MovieContract.RatedEntry.COLUMN_RATING,
+            MovieContract.RatedEntry.COLUMN_DATE
+    };
 
     public MovieFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        updateList();
         super.onCreate(savedInstanceState);
     }
 
 
 
     public interface Callback {
-        void onItemSelected(MovieDetail movie);
+        void onItemSelected(Uri uri);
     }
 
     private void updateList() {
@@ -56,7 +77,7 @@ public class MovieFragment extends Fragment {
             FetchMovieTask movieTask = new FetchMovieTask(getActivity(),movieAdapter);
             movieTask.execute(orderBy);
         } else {
-            new FetchFavoriteMoviesTask(getActivity()).execute();
+            new FetchSavedMoviesTask(getActivity()).execute(orderBy);
         }
 
 
@@ -64,10 +85,9 @@ public class MovieFragment extends Fragment {
 
     }
 
-    @Override
-    public void onStart()  {
-        super.onStart();
+    void onOrderChanged( ) {
         updateList();
+        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
     }
 
     @Override
@@ -76,30 +96,54 @@ public class MovieFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        movieAdapter = new MovieAdapter(getActivity(),R.layout.list_item_movie, mMovies);
+        movieAdapter = new MovieAdapter2(getActivity(),null,0);
         // Get a reference to the ListView, and attach this adapter to it.
-        GridView gridView = (GridView) rootView.findViewById(R.id.gridview_movie);
+        gridView = (GridView) rootView.findViewById(R.id.gridview_movie);
 
         gridView.setAdapter(movieAdapter);
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gridView.setOnItemClickListener((new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-                MovieDetail movie =  movieAdapter.getItem(position);
-                    ((Callback) getActivity())
-                            .onItemSelected(movie);
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                if (cursor != null) {
+                    String orderBy = Utility.getPreferredOrder(getActivity());
+                    switch (orderBy) {
+                        case POPULAR:
+                            ((Callback) getActivity())
+                                    .onItemSelected(MovieContract.PopularEntry.buildPopularMovieUri(cursor.getLong(COL_MOVIE_ID)
+                                    ));
+                            break;
+                        case RATED:
+                            ((Callback) getActivity())
+                                    .onItemSelected(MovieContract.RatedEntry.buildRatedMovieUri(cursor.getLong(COL_MOVIE_ID)
+                                    ));
+                            break;
+                        default:
+                            ((Callback) getActivity())
+                                    .onItemSelected(MovieContract.MovieEntry.buildMovieUri(cursor.getLong(COL_MOVIE_ID)
+                                    ));
+                    }
+                }
+                mPosition = position;
+
             }
-        });
+        }));
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SELECTED_KEY)) {
-            // The listview probably hasn't even been populated yet.  Actually perform the
-            // swapout in onLoadFinished.
+
             mPosition = savedInstanceState.getInt(SELECTED_KEY);
         }
         return rootView;
     }
 
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(MOVIE_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -109,52 +153,84 @@ public class MovieFragment extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
 
-    public class FetchFavoriteMoviesTask extends AsyncTask<Void, Void, ArrayList<MovieDetail>> {
+        String orderBy = Utility.getPreferredOrder(getActivity());
+        switch (orderBy) {
+            case POPULAR: uri = MovieContract.PopularEntry.CONTENT_URI;
+                COLUMNS = POPULAR_COLUMNS;
+                break;
+            case RATED: uri = MovieContract.RatedEntry.CONTENT_URI;
+                COLUMNS = RATED_COLUMNS;
+                break;
+            default:uri = MovieContract.MovieEntry.CONTENT_URI;
+                COLUMNS = MOVIE_COLUMNS;
+        }
+
+        return new CursorLoader(getActivity(),
+                uri,
+                COLUMNS,
+                null,
+                null,
+                null);
+    }
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if(data != null) {
+            movieAdapter.swapCursor(data);
+            if (mPosition != GridView.INVALID_POSITION) {
+
+                gridView.smoothScrollToPosition(mPosition);
+            }
+        }
+    }
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        movieAdapter.swapCursor(null);
+    }
+
+    public class FetchSavedMoviesTask extends AsyncTask<String , Void, Cursor> {
+
 
         private Context mContext;
 
-        public FetchFavoriteMoviesTask(Context context) {
+        public FetchSavedMoviesTask(Context context) {
             mContext = context;
         }
 
-        private ArrayList<MovieDetail> getFavoriteMoviesDataFromCursor(Cursor cursor) {
-            ArrayList<MovieDetail> results = new ArrayList<>();
-            if (cursor != null && cursor.moveToFirst()) {
-                do {
-                    MovieDetail movie = new MovieDetail(cursor.getInt(COL_MOVIE_ID),
-                            cursor.getString(COL_TITLE),cursor.getString(COL_IMAGE),
-                            cursor.getString(COL_IMAGE2),cursor.getString(COL_OVERVIEW),cursor.getString(COL_DATE),
-                            cursor.getDouble(COL_RATING));
-                    results.add(movie);
-                } while (cursor.moveToNext());
-                cursor.close();
-            }
-            return results;
-        }
-
         @Override
-        protected ArrayList<MovieDetail> doInBackground(Void... params) {
-            Cursor cursor = mContext.getContentResolver().query(
-                    MovieContract.MovieEntry.CONTENT_URI,
-                    MOVIE_COLUMNS,
+        protected Cursor doInBackground(String... params) {
+            switch (params[0]){
+                case POPULAR: uri = MovieContract.PopularEntry.CONTENT_URI;
+                        COLUMNS = POPULAR_COLUMNS;
+                break;
+                case RATED: uri = MovieContract.RatedEntry.CONTENT_URI;
+                    COLUMNS = RATED_COLUMNS;
+                    break;
+                default:uri = MovieContract.MovieEntry.CONTENT_URI;
+                    COLUMNS = MOVIE_COLUMNS;
+            }
+
+            return  mContext.getContentResolver().query(
+                    uri,
+                    COLUMNS,
                     null,
                     null,
                     null
             );
-            return getFavoriteMoviesDataFromCursor(cursor);
         }
 
         @Override
-        protected void onPostExecute(ArrayList<MovieDetail> result) {
-            if (result != null) {
-                movieAdapter.clear();
-                for (MovieDetail info : result) {
-                    movieAdapter.add(info);
+        protected void onPostExecute( Cursor data) {
+            if (data != null) {
+                movieAdapter.swapCursor(data);
+                if (mPosition != GridView.INVALID_POSITION) {
+
+                    gridView.smoothScrollToPosition(mPosition);
                 }
             }
         }
-
     }
 }
 
