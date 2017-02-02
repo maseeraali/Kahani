@@ -102,11 +102,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     CardView mReviewsCardview;
     @BindView(R.id.detail_trailers_cardview)
     CardView mTrailersCardview;
-
+    @BindView(R.id.fragment_detail)
+    ScrollView mDetailLayout;
 
     private TrailerAdapter mTrailerAdapter;
     private ReviewAdapter mReviewAdapter;
-    private ScrollView mDetailLayout;
     private Toast mToast;
     private MenuItem action_favorite;
     private ShareActionProvider mShareActionProvider;
@@ -326,8 +326,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             releaseDate = cursor.getString(COL_DATE);
             voteAvg = cursor.getDouble(COL_RATING);
 
-            mDetailLayout = (ScrollView) getView().findViewById(R.id.fragment_detail);
-            ButterKnife.bind(this, mDetailLayout);
+            ButterKnife.bind(this, getView());
             mDetailLayout.setVisibility(View.VISIBLE);
 
             mTrailerAdapter = new TrailerAdapter(getActivity(), new ArrayList<Trailer>());
@@ -381,7 +380,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             mReleaseDateTextView.setText(parseDateString(releaseDate));
             mSynopsisTextView.setText(synopsis);
         }
-        cursor.close();
+//        cursor.close();
     }
 
 

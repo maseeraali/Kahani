@@ -15,6 +15,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 import static com.example.maseera.kahani.FetchMovieTask.COL_MOVIE_ID;
 import static com.example.maseera.kahani.FetchMovieTask.MOVIE_COLUMNS;
 
@@ -27,12 +30,12 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
     private static final String FAVORITE = "favorite";
     private static final String POPULAR = "popular";
     private static final String RATED = "top_rated";
-    private GridView gridView;
     private int mPosition = GridView.INVALID_POSITION;
     private static final String SELECTED_KEY = "selected_position";
     private static final int MOVIE_LOADER = 0;
     private Uri uri;
     private  String[] COLUMNS;
+    @BindView(R.id.gridview_movie) GridView gridView;
     public static final String[] POPULAR_COLUMNS = {
 
             MovieContract.PopularEntry.TABLE_NAME + "." + MovieContract.PopularEntry._ID,
@@ -97,9 +100,8 @@ public class MovieFragment extends Fragment implements LoaderManager.LoaderCallb
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         movieAdapter = new MovieAdapter2(getActivity(),null,0);
-        // Get a reference to the ListView, and attach this adapter to it.
-        gridView = (GridView) rootView.findViewById(R.id.gridview_movie);
 
+        ButterKnife.bind(this,rootView);
         gridView.setAdapter(movieAdapter);
 
         gridView.setOnItemClickListener((new AdapterView.OnItemClickListener() {
